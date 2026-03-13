@@ -1,5 +1,6 @@
 <?php
 require 'connection/connect.php';
+include 'components/common.php';
 session_start();
 if (!isset($_SESSION['email']) || $_SESSION['logged_in'] !== true) {
     header('Location: login.php');
@@ -21,7 +22,7 @@ $user = $result->fetch_assoc();
 
 <body>
     <div class="container mt-5 w-50">
-        <h2 class="mb-4 text-center"><img src="uploads/<?php echo $user['photo']; ?>" alt="Profile Photo" class="img-fluid rounded-circle"></h2>
+        <h2 class="mb-4 text-center"><img src="uploads/<?php echo $user['photo']; ?>" alt="Profile Photo" class="img-thumbnail border border-warning" width="150" height="150"></h2>
         <form class="ajax-form" method="post" action="#" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-6 mb-3">

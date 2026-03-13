@@ -40,8 +40,8 @@ $user = $result->fetch_assoc();
 
                 </div>
 
-                <a href="#">Dashboard</a>
-                <a href="#">Profile</a>
+                <a href="dashboard.php">Dashboard</a>
+                <a href="profile.php">Profile</a>
                 <a href="#">Settings</a>
                 <a href="logout.php">Logout</a>
 
