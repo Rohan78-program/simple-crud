@@ -14,21 +14,99 @@ $user = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard::CRuD</title>
+
+    <title>User Dashboard</title>
+
+
 </head>
 
 <body>
-    <div class="container mt-5">
-        <h1>Welcome to the Dashboard :: <?= $user['name'] ?></h1>
-        <p>This is a protected area. Only logged-in users can access this page.</p>
-        <img class="img-thumbnail border border-primary float-end" src="uploads/<?= $user['photo'] ?>" alt="Profile Photo" width="150" height="150">
-        <a href="logout.php" class="btn btn-danger">Logout</a>
+
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+
+                <div class="text-center mb-4">
+
+                    <img src="uploads/<?php echo $user['photo']; ?>" class="profile-img">
+
+                    <h5 class="mt-2"><?php echo $user['name']; ?></h5>
+
+                </div>
+
+                <a href="#">Dashboard</a>
+                <a href="#">Profile</a>
+                <a href="#">Settings</a>
+                <a href="logout.php">Logout</a>
+
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10">
+
+                <nav class="navbar navbar-light bg-white shadow-sm mb-4">
+
+                    <div class="container-fluid">
+
+                        <span class="navbar-brand">Welcome <?php echo $user['name']; ?></span>
+
+                    </div>
+
+                </nav>
+
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5>Total Orders</h5>
+                                    <h3>12</h3>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5>Messages</h5>
+                                    <h3>5</h3>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5>Notifications</h5>
+                                    <h3>3</h3>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
 </body>
 
 </html>
