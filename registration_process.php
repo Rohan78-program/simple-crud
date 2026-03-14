@@ -75,16 +75,21 @@ if (empty($password) || strlen($password) < 6 || !preg_match("/^(?=.*[A-Za-z])(?
 //if there is no error, proceed with database operations
 if (empty($response['error'])) {
     //check if email already exists
-    $exists = "SELECT email FROM user WHERE email = '$email'";
+    $stmt = $conn->prepare("SELECT * FROM user WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $exists = $stmt->get_result();
 
-    if ($conn->query($exists)->num_rows > 0) {
+
+    if ($exists->num_rows > 0) {
         $response['error']['general'] = "Email already exists.";
     } else {
 
         //insert user into database
-        $sql = "INSERT INTO user (name, email, phone, address, password, photo) VALUES ('$name', '$email', '$phone', '$address', '$password', '$photoName')";
+        $stmt = $conn->prepare("INSERT INTO user (name, email, phone, address, password, photo) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $name, $email, $phone, $address, $password, $photoName);
 
-        if ($conn->query($sql) === true) {
+        if ($stmt->execute() === true) {
             $response['success'] = true;
             $response['message'] = "User successfully registered.";
         } else {

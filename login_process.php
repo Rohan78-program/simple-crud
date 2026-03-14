@@ -13,9 +13,10 @@ if (empty($email) || empty($password)) {
     $response['error']['email'] = 'User Name is required.';
     $response['error']['password'] = 'Password is required.';
 } else {
-    $sql = "SELECT email,password FROM user WHERE email='$email' AND password='$password'";
-
-    $result = $conn->query($sql);
+    $sql = $conn->prepare("SELECT * FROM user WHERE email = ? AND password = ?");
+    $sql->bind_param("ss", $email, $password);
+    $sql->execute();
+    $result = $sql->get_result();
     if ($result->num_rows > 0) {
         $response['success'] = true;
         $response['message'] = 'Login successful.';
