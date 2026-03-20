@@ -34,7 +34,12 @@ $user = $result->fetch_assoc();
 
                 <div class="text-center mb-4">
 
-                    <img src="uploads/<?php echo $user['photo']; ?>" class="profile-img">
+                    <?php if ($user['photo']) { ?>
+                        <img src="uploads/<?php echo $user['photo']; ?>" class="rounded-circle" width="100" height="100" alt="Profile Picture">
+                    <?php } else { ?>
+                        <img src="uploads/default-profile.png" class="rounded-circle" width="100" height="100" alt="Default Profile Picture">
+                    <?php } ?>
+
 
                     <h5 class="mt-2"><?php echo $user['name']; ?></h5>
 
