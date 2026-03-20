@@ -13,15 +13,20 @@ if (empty($email) || empty($password)) {
     $response['error']['email'] = 'User Name is required.';
     $response['error']['password'] = 'Password is required.';
 } else {
-    $sql = $conn->prepare("SELECT * FROM user WHERE email = ? AND password = ?");
-    $sql->bind_param("ss", $email, $password);
+    $sql = $conn->prepare("SELECT password FROM user WHERE email = ?");
+    $sql->bind_param("s", $email);
     $sql->execute();
     $result = $sql->get_result();
-    if ($result->num_rows > 0) {
-        $response['success'] = true;
-        $response['message'] = 'Login successful.';
-        $_SESSION['email'] = $email;
-        $_SESSION['logged_in'] = true;
+    $storedHash = $result->fetch_assoc();
+    if ($storedHash) {
+        if (password_verify($password, $storedHash['password'])) {
+            $response['success'] = true;
+            $response['message'] = 'Login successful.';
+            $_SESSION['email'] = $email;
+            $_SESSION['logged_in'] = true;
+        } else {
+            $response['error']['general'] = 'Invalid Credentials. Please try again.';
+        }
     } else {
         $response['error']['general'] = 'Invalid Credentials. Please try again.';
     }
