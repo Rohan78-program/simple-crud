@@ -85,9 +85,11 @@ if (empty($response['error'])) {
         $response['error']['general'] = "Email already exists.";
     } else {
 
+        //hash the password before storing it in the database
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         //insert user into database
         $stmt = $conn->prepare("INSERT INTO user (name, email, phone, address, password, photo) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssss", $name, $email, $phone, $address, $password, $photoName);
+        $stmt->bind_param("ssssss", $name, $email, $phone, $address, $hashedPassword, $photoName);
 
         if ($stmt->execute() === true) {
             $response['success'] = true;
