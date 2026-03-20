@@ -48,11 +48,11 @@ date_default_timezone_set('Asia/Kolkata');
                 <img src="photo-camera.png" style="width: 40px;height: 40px;" alt="edit profile picture">
             </a>
         </h2>
-        <form class="ajax-form" method="post" action="#" enctype="multipart/form-data">
+        <form class="ajaxForm" method="post" action="userUpdate.php" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="name" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="name" name="name" value="<?php echo $user['name']; ?>" required readonly>
+                    <input type="text" class="form-control" id="name" name="name" value="<?php echo $user['name']; ?>" required>
                     <div class="invalid-feedback"></div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -64,13 +64,13 @@ date_default_timezone_set('Asia/Kolkata');
 
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone Number</label>
-                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo $user['phone']; ?>" placeholder="1234567890" required readonly>
+                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo $user['phone']; ?>" placeholder="1234567890">
                 <div class="invalid-feedback"></div>
             </div>
 
             <div class="mb-3">
                 <label for="address" class="form-label">Address</label>
-                <textarea class="form-control" id="address" name="address" rows="2" required readonly><?php echo $user['address']; ?></textarea>
+                <textarea class="form-control" id="address" name="address" rows="2" required><?php echo $user['address']; ?></textarea>
                 <div class="invalid-feedback"></div>
             </div>
             <button type="submit" class="btn btn-primary w-100">Update Profile</button>
@@ -126,16 +126,22 @@ date_default_timezone_set('Asia/Kolkata');
     <script>
         const toastEl = document.getElementById('liveToast');
         const toast = new bootstrap.Toast(toastEl, {
-            delay: 5000
+            delay: 3000
         });
 
-        $(document).on('submit', '.ajaxForm', function(e) {
+        $(document).on('submit', '.ajaxForm, .ajax-form', function(e) {
             e.preventDefault();
             $('#toast-msg').text('');
 
             const form = $(this);
             const url = form.attr('action');
             const formData = new FormData(this);
+            const submitButton = form.find('button[type="submit"]');
+            const originalText = submitButton.text();
+            const actionName = url.toLowerCase().includes('updatephoto') ? 'Uploading...' : 'Updating...';
+
+            form.find('.invalid-feedback').text('').hide();
+            form.find('.form-control').removeClass('is-invalid');
 
             $.ajax({
                 url: url,
@@ -146,19 +152,45 @@ date_default_timezone_set('Asia/Kolkata');
                 dataType: 'json',
 
                 beforeSend: function() {
-                    form.find('button[type="submit"]').prop('disabled', true).text('Uploading...');
+                    submitButton.prop('disabled', true).text(actionName);
                 },
 
                 success: function(response) {
                     if (response.success) {
-                        $('#toast-msg').text('Profile Photo Updated Successfully.');
+                        const message = response.message || response.success || 'Updated successfully';
+                        $('#toast-msg').text(message);
                         toast.show();
-                        form[0].reset();
+
+                        if (url.toLowerCase().includes('updatephoto')) {
+                            form[0].reset();
+                        }
+
                         setTimeout(function() {
-                            window.location.href = 'profile.php';
-                        }, 5000);
+                            window.location.reload();
+                        }, 1000);
                     } else {
-                        $('#toast-msg').text(response.error || 'Something went wrong');
+                        if (typeof response.error === 'object' && response.error !== null) {
+                            const messages = [];
+
+                            if (response.error.general) {
+                                messages.push(response.error.general);
+                            }
+
+                            $.each(response.error, function(key, text) {
+                                if (key !== 'general') {
+                                    messages.push(text);
+                                    const input = form.find('[name="' + key + '"]');
+                                    if (input.length) {
+                                        input.addClass('is-invalid');
+                                        input.next('.invalid-feedback').text(text).show();
+                                    }
+                                }
+                            });
+
+                            $('#toast-msg').text(messages.join(' | '));
+                        } else {
+                            $('#toast-msg').text(response.error || 'Something went wrong');
+                        }
                         toast.show();
                     }
                 },
@@ -169,12 +201,37 @@ date_default_timezone_set('Asia/Kolkata');
                 },
 
                 complete: function() {
-                    form.find('button[type="submit"]').prop('disabled', false).text('Upload');
+                    submitButton.prop('disabled', false).text(originalText);
                 }
-
             });
         });
     </script>
+
+</body>
+
+</html>
+$('#toast-msg').text(response.error.general);
+toast.show();
+}
+$.each(response.error, function(key, message) {
+let input = form.find('[name="' + key + '"]');
+input.addClass('is-invalid');
+input.next('.invalid-feedback').text(message).show();
+});
+}
+},
+
+error: function() {
+$('#toast_msg').text('An error occurred. Please try again.');
+},
+
+complete: function() {
+form.find('button[type="submit"]').prop('disabled', false).text('Upload');
+}
+
+});
+});
+</script>
 
 </body>
 
